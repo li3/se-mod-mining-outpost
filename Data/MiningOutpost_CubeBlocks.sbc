@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <CubeBlocks>
+    <Definition>
+      <Id>
+        <TypeId>ControlPanel</TypeId>
+        <SubtypeId>Base_Mining_Outpost</SubtypeId>
+      </Id>
+      <DisplayName>Base Mining Outpost</DisplayName>
+      <Icon>Textures\GUI\Icons\Cubes\Blastfurnace.dds</Icon>
+      <CubeSize>Large</CubeSize>
+      <BlockTopology>TriangleMesh</BlockTopology>
+      <Size x="1" y="2" z="1" />
+      <ModelOffset x="0" y="0" z="0" />
+      <Model>Models\Cubes\Large\BlastFurnace.mwm</Model>
+      <Components>
+        <Component Subtype="SteelPlate" Count="5500" />
+        <Component Subtype="Construction" Count="250" />
+        <Component Subtype="LargeTube" Count="100" />
+        <Component Subtype="Motor" Count="200" />
+        <Component Subtype="Computer" Count="250" />
+        <Component Subtype="SteelPlate" Count="500" />
+      </Components>
+      <CriticalComponent Subtype="Computer" Index="0" />
+      <MirroringZ>Y</MirroringZ>
+      <MirroringY>Z</MirroringY>
+      <BuildProgressModels>
+        <Model BuildPercentUpperBound="0.33" File="Models\Cubes\Large\BlastFurnaceConstruction_1.mwm" />
+        <Model BuildPercentUpperBound="0.66" File="Models\Cubes\Large\BlastFurnaceConstruction_2.mwm" />
+        <Model BuildPercentUpperBound="1.00" File="Models\Cubes\Large\BlastFurnaceConstruction_3.mwm" />
+      </BuildProgressModels>
+      <BlockPairName>Base_Mining_Outpost</BlockPairName>
+      <EdgeType>Light</EdgeType>
+      <BuildTimeSeconds>1000</BuildTimeSeconds>
+      <InventorySize>
+        <X>2</X>
+        <Y>2</Y>
+        <Z>2</Z>
+      </InventorySize>
+      <DamageEffectName>Damage_HeavyMech_Damaged</DamageEffectName>
+      <DamagedSound>ParticleHeavyMech</DamagedSound>
+      <EmissiveColorPreset>Default</EmissiveColorPreset>
+      <DestroyEffect>BlockDestroyedExplosion_Large</DestroyEffect>
+      <DestroySound>WepSmallWarheadExpl</DestroySound>
+    </Definition>
+  </CubeBlocks>
+</Definitions>
