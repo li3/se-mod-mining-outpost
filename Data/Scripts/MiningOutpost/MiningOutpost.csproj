@@ -89,20 +89,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\CustomInfoUpdaterComponent.cs" />
     <Compile Include="Components\DirectionalOreFinderComponent.cs" />
     <Compile Include="Components\MiningOutpostComponent.cs" />
-    <Compile Include="Components\MiningOutpostUiComponent.cs" />
     <Compile Include="Components\ConiditonalComponent.cs" />
+    <Compile Include="Components\MiningOutpostSettingsReader.cs" />
     <Compile Include="Components\OreSpawnerComponent.cs" />
     <Compile Include="Components\WorkingLightsComponent.cs" />
     <Compile Include="Extensions\IMyStorageExtensions.cs" />
-    <None Include="Components\MiningOutpostComponent.cs.old" />
     <Compile Include="Factories\MiningOutpostComponentDecorator.cs" />
     <Compile Include="Models\MiningOutpostSettings.cs" />
-    <Compile Include="Network\Server.cs" />
+    <Compile Include="Models\VoxelDefinitionAndBuilder.cs" />
     <Compile Include="Utilities\MiningOutpostStatistics.cs" />
-    <Compile Include="Utilities\SettingsCache.cs" />
-    <Compile Include="Utilities\SettingsManager.cs" />
     <Compile Include="Utilities\VoxelEntityAtPosition.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,5 @@
-﻿using Sandbox.Definitions;
-using Sandbox.Game;
+﻿using Li3.MiningOutpost.Models;
+using Sandbox.Definitions;
 using Sandbox.Game.Entities;
 using Sandbox.ModAPI;
 using System.Collections.Generic;
@@ -19,7 +19,7 @@ namespace Li3.MiningOutpost.Components
 		const int VoxelLod1CollisionLayer = 11;
 
 		public bool HasUnobstructedLineOfSight => IsLineOfSightClear();
-		public List<MyObjectBuilder_Ore> OresDetected { get; private set; }
+		public List<VoxelDefinitionAndBuilder> OresDetected { get; private set; }
 
 		private Vector3D scanDirectionField;
 		public Vector3D ScanDirection
@@ -33,7 +33,7 @@ namespace Li3.MiningOutpost.Components
 
 		public DirectionalOreFinderComponent()
 		{
-			OresDetected = new List<MyObjectBuilder_Ore>();
+			OresDetected = new List<VoxelDefinitionAndBuilder>();
 		}
 
 		private bool IsLineOfSightClear()
@@ -58,15 +58,23 @@ namespace Li3.MiningOutpost.Components
 				var ores = MapVoxelsToOre(voxels);
 
 				UpdateOresDetected(ores);
-				MyVisualScriptLogicProvider.ShowNotification(string.Format("O:{0}", ores.Count), 2000);
 			}
 		}
 
-		private void UpdateOresDetected(List<string> ores)
+		private void UpdateOresDetected(List<MyVoxelMaterialDefinition> ores)
 		{
 			ores.ForEach(ore =>
 			{
-				OresDetected.Add(MyObjectBuilderSerializer.CreateNewObject<MyObjectBuilder_Ore>(ore));
+				if (!ore.CanBeHarvested)
+					return;
+
+				var item = new VoxelDefinitionAndBuilder()
+				{
+					Definition = ore,
+					Builder = MyObjectBuilderSerializer.CreateNewObject<MyObjectBuilder_Ore>(ore.MinedOre)
+				};
+
+				OresDetected.Add(item);
 			});
 		}
 
@@ -84,9 +92,9 @@ namespace Li3.MiningOutpost.Components
 			return voxels;
 		}
 
-		private List<string> MapVoxelsToOre(List<VoxelEntityAtPosition> voxels)
+		private List<MyVoxelMaterialDefinition> MapVoxelsToOre(List<VoxelEntityAtPosition> voxels)
 		{
-			var materials = new List<string>();
+			var materials = new List<MyVoxelMaterialDefinition>();
 			voxels.ForEach(voxel =>
 			{
 				var material = GetOreAtPosition(voxel.Voxel, voxel.Position);
@@ -99,7 +107,7 @@ namespace Li3.MiningOutpost.Components
 			return materials;
 		}
 
-		private string GetOreAtPosition(IMyVoxelBase voxel, Vector3D position)
+		private MyVoxelMaterialDefinition GetOreAtPosition(IMyVoxelBase voxel, Vector3D position)
 		{
 			if (voxel == null || voxel.Storage == null)
 				return null;
@@ -120,9 +128,7 @@ namespace Li3.MiningOutpost.Components
 			storage.Resize(voxelMin, voxelMax);
 			voxel.Storage.ReadRange(storage, MyStorageDataTypeFlags.ContentAndMaterial, 0, voxelMin, voxelMax);
 
-			var material = MyDefinitionManager.Static.GetVoxelMaterialDefinition(storage.Material(0));
-
-			return material.MinedOre;
+			return MyDefinitionManager.Static.GetVoxelMaterialDefinition(storage.Material(0));
 		}
 
 		private Vector3D GetTarget()

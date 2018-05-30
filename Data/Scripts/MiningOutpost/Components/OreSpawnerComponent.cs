@@ -1,6 +1,7 @@
-﻿using Sandbox.Game;
+﻿using Li3.MiningOutpost.Models;
 using System;
 using System.Collections.Generic;
+using VRage;
 using VRage.Game;
 using VRage.Game.Components;
 using VRage.Game.ModAPI;
@@ -9,16 +10,22 @@ namespace Li3.MiningOutpost.Components
 {
 	public class OreSpawnerComponent : MyEntityComponentBase
 	{
-		private static Func<int> AmountZero = () => 0;
-		public Func<int> CalculateAmountToSpawn { get; set; }
+		public const float ORE_TO_SPAWN_PER_HOUR = 100000f;
+		public const float TICKS_PER_HOUR = 60 * 60 * 60;
+
+		private static Func<float> AmountZero = () => 0f;
+		public Func<float> CalculateAmountToSpawn { get; set; }
+		public Dictionary<string, float> AmountsSpawnedLastUpdate { get; private set; }
 
 		public OreSpawnerComponent()
 		{
 			CalculateAmountToSpawn = AmountZero;
+			AmountsSpawnedLastUpdate = new Dictionary<string, float>();
 		}
 
 		public void Update()
 		{
+			AmountsSpawnedLastUpdate.Clear();
 			var oreFinder = Entity.Components.Get<DirectionalOreFinderComponent>();
 			var inventory = Entity.GetInventory();
 
@@ -29,7 +36,6 @@ namespace Li3.MiningOutpost.Components
 					var amount = CalculateAmountToSpawn();
 					if (amount > 0)
 					{
-						MyVisualScriptLogicProvider.ShowNotification(string.Format("Amount: {0}", amount), 2000);
 						SpawnOresIntoInventory(inventory, oreFinder.OresDetected, amount);
 					}
 				}
@@ -41,11 +47,17 @@ namespace Li3.MiningOutpost.Components
 			return oreFinder != null && inventory != null;
 		}
 
-		private void SpawnOresIntoInventory(IMyInventory inventory, List<MyObjectBuilder_Ore> builders, int amount)
+		private void SpawnOresIntoInventory(IMyInventory inventory, List<VoxelDefinitionAndBuilder> voxels, float amount)
 		{
-			builders.ForEach(builder => {
-				if (!inventory.IsFull)
-					inventory.AddItems(amount, builder);
+			voxels.ForEach(voxel => {
+				if (!inventory.IsFull) {
+					var amountToAdd = (MyFixedPoint)amount * voxel.Definition.MinedOreRatio;
+					if (inventory.CanItemsBeAdded(amountToAdd, voxel.Builder.GetId()))
+					{
+						AmountsSpawnedLastUpdate.Add(voxel.Definition.MinedOre, (float)amountToAdd);
+						inventory.AddItems(amountToAdd, voxel.Builder);
+					}
+				}
 			});
 		}
 
